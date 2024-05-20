@@ -37,7 +37,25 @@
 
       forAllSystems = fn:
         nixpkgs.lib.genAttrs allSystems
-        (system: fn { pkgs = import nixpkgs { inherit system; }; inherit system;});
+        (system: fn { 
+          pkgs = import nixpkgs { 
+                  overlays = [
+                    (final: prev: {
+                      isl23 = prev.callPackage ./nix/isl/0.23.0.nix {};
+                      libpkgconfg3 = prev.libpkgconf.overrideAttrs {
+                        version = "1.6.3";
+                        src = prev.fetchurl {
+                          version = "1.6.3";
+                          url = "https://distfiles.dereferenced.org/pkgconf/pkgconf-1.6.3.tar.xz";
+                          sha256 = "sha256-YfCzGw1eoOhitFSoDBcPV7rUeHnAxCvY3okgD/YuohA=";
+                        };
+                      };
+                      
+                    })
+                  ];
+                      inherit system;   
+                     }; 
+          inherit system;});
 
       webOSToolchain = {system, fetchurl, runCommand}: 
         runCommand "webos-toolchain" {} ''
@@ -63,7 +81,19 @@
       in
       {
         default = pkgs.mkShell {
-          nativeBuildInputs = [ webOS pkgs.cmake pkgs.coreutils-full ];         
+          nativeBuildInputs = [ webOS pkgs.cmake pkgs.coreutils-full];
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+            "${pkgs.isl23}"
+            "${pkgs.gmp}"
+            "${pkgs.mpfr}"
+            "${pkgs.libmpc}"
+            "${pkgs.gcc}"
+            "${pkgs.readline}"
+            "${pkgs.libxml2.out}"
+            "${pkgs.stdenv.cc.cc.lib}"
+            "${pkgs.expat}"
+            "${pkgs.libpkgconfg3.lib}"
+          ];
           shellHook = ''
             source ${webOS}/environment-setup
             function webos_cmake_kit {
