@@ -49,7 +49,7 @@
           # Patch sdl2-config cflags, most programs use <SDL2/SDL.h> instead of <SDL.h>
           # However, the toolchain include dir goes directly to inside SDL2 folder.
           mkdir SDL2
-          cp -R $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2 SDL2/ && mv SDL2 $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2/
+          ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2 $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2/
           rm -rf $out/arm-webos-linux-gnueabi_sdk-buildroot
         '';
     in {
@@ -66,7 +66,6 @@
             source ${webOS}/environment-setup
             alias sdl2-config='${webOS}/arm-webos-linux-gnueabi/sysroot/usr/bin/sdl2-config'
             alias pyhon3-config='${webOS}/arm-webos-linux-gnueabi/sysroot/usr/bin/python3-config'
-            export PATH=$PATH:${webOS}/sysroot/usr/bin/
             function webos_cmake_kit {
               mkdir -p .vscode
               echo '${builtins.toJSON [{ name = "webos-toolchain"; toolchainFile = "${webOS}/share/buildroot/toolchainfile.cmake";}]}' > .vscode/cmake-kits.json
