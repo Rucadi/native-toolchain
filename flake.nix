@@ -50,6 +50,8 @@
           # However, the toolchain include dir goes directly to inside SDL2 folder.
           mkdir SDL2
           ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2 $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2/
+          ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/sdl2-config $out/bin/sdl2-config
+          ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/python3-config $out/bin/python3-config
           rm -rf $out/arm-webos-linux-gnueabi_sdk-buildroot
         '';
     in {
@@ -64,8 +66,6 @@
           nativeBuildInputs = [ webOS pkgs.cmake pkgs.coreutils-full ];         
           shellHook = ''
             source ${webOS}/environment-setup
-            alias sdl2-config='${webOS}/arm-webos-linux-gnueabi/sysroot/usr/bin/sdl2-config'
-            alias pyhon3-config='${webOS}/arm-webos-linux-gnueabi/sysroot/usr/bin/python3-config'
             function webos_cmake_kit {
               mkdir -p .vscode
               echo '${builtins.toJSON [{ name = "webos-toolchain"; toolchainFile = "${webOS}/share/buildroot/toolchainfile.cmake";}]}' > .vscode/cmake-kits.json
