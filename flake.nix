@@ -57,8 +57,22 @@
                      }; 
           inherit system;});
 
-      webOSToolchain = {system, fetchurl, runCommand}: 
-        runCommand "webos-toolchain" {} ''
+      webOSToolchain = {system, lib, toybox, patchelf, fetchurl, runCommand, isl23, gmp, mpfr, libmpc, gcc, readline, libxml2, stdenv, expat, libpkgconfg3}: 
+      let 
+         RPATH_LIST = lib.makeLibraryPath [
+            "${isl23}"
+            "${gmp}"
+            "${mpfr}"
+            "${libmpc}"
+            "${gcc}"
+            "${readline}"
+            "${libxml2.out}"
+            "${stdenv.cc.cc.lib}"
+            "${expat}"
+            "${libpkgconfg3.lib}"
+          ];
+      in
+        runCommand  "webos-toolchain" {} ''
           mkdir -p $out
           tar -xf ${inputs."${system}"} -C $out
           mv $out/arm-webos-linux-gnueabi_sdk-buildroot/* $out
@@ -71,6 +85,11 @@
           ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/sdl2-config $out/bin/sdl2-config
           ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/python3-config $out/bin/python3-config
           rm -rf $out/arm-webos-linux-gnueabi_sdk-buildroot
+
+          # Patch $out/bin to use the correct RPATH
+          for file in $out/bin/*; do
+¡            ${patchelf}/bin/patchelf --add-rpath ${RPATH_LIST} $file || true
+          done
         '';
     in {
 
@@ -82,18 +101,6 @@
       {
         default = pkgs.mkShell {
           nativeBuildInputs = [ webOS pkgs.cmake pkgs.coreutils-full];
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-            "${pkgs.isl23}"
-            "${pkgs.gmp}"
-            "${pkgs.mpfr}"
-            "${pkgs.libmpc}"
-            "${pkgs.gcc}"
-            "${pkgs.readline}"
-            "${pkgs.libxml2.out}"
-            "${pkgs.stdenv.cc.cc.lib}"
-            "${pkgs.expat}"
-            "${pkgs.libpkgconfg3.lib}"
-          ];
           shellHook = ''
             source ${webOS}/environment-setup
             function webos_cmake_kit {
