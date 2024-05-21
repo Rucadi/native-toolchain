@@ -57,7 +57,7 @@
                      }; 
           inherit system;});
 
-      webOSToolchain = {system, lib, toybox,file,  patchelf, fetchurl, runCommand, isl23, gmp, mpfr, libmpc, gcc, readline, libxml2, stdenv, expat, libpkgconfg3}: 
+      webOSToolchain = {system, lib, toybox,file,  patchelf, python3, fetchurl, runCommand, isl23, gmp, mpfr, libmpc, gcc, readline, libxml2, stdenv, expat, libpkgconfg3}: 
       let 
          RPATH_LIST = lib.makeLibraryPath [
             "${isl23}"
@@ -73,7 +73,7 @@
           ];
       in
         runCommand  "webos-toolchain" {
-          buildInputs = [toybox patchelf isl23 gmp mpfr file libmpc gcc readline libxml2 expat libpkgconfg3];
+          buildInputs = [toybox patchelf python3 isl23 gmp mpfr file libmpc gcc readline libxml2 expat libpkgconfg3];
         } ''
           mkdir -p $out
           tar -xf ${inputs."${system}"} -C $out
@@ -86,7 +86,7 @@
           ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2 $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2/ || true
 
           for file in $out/bin/*; do
-              if [[ ! $(basename "$file") == arm-* && ! $(basename "$file") == python3-config && ! $(basename "$file") == sdl2-config && ! $(basename "$file") == toolchain-wrapper ]]; then
+              if [[ ! $(basename "$file") == arm-* && ! $(basename "$file") == python3-config && ! $(basename "$file") == sdl2-config && ! $(basename "$file") == toolchain-wrapper && ! $(basename "$file") == toolchain-wrapper.br_real ]]; then
                   rm "$file"
               fi
           done
