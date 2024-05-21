@@ -72,7 +72,9 @@
             "${libpkgconfg3.lib}"
           ];
       in
-        runCommand  "webos-toolchain" {} ''
+        runCommand  "webos-toolchain" {
+          buildInputs = [toybox patchelf isl23 gmp mpfr libmpc gcc readline libxml2 expat libpkgconfg3];
+        } ''
           mkdir -p $out
           tar -xf ${inputs."${system}"} -C $out
           mv $out/arm-webos-linux-gnueabi_sdk-buildroot/* $out
@@ -88,7 +90,7 @@
 
           # Patch $out/bin to use the correct RPATH
           for file in $out/bin/*; do
-¡            ${patchelf}/bin/patchelf --set-rpath '${RPATH_LIST}' '$file'|| true
+            ${patchelf}/bin/patchelf --set-rpath '${RPATH_LIST}' "$file" || true
           done
         '';
     in {
