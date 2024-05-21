@@ -88,7 +88,7 @@
 
           # Patch $out/bin to use the correct RPATH
           for file in $out/bin/*; do
-¡            ${patchelf}/bin/patchelf --add-rpath ${RPATH_LIST} $file || true
+¡            ${patchelf}/bin/patchelf --set-rpath ${RPATH_LIST} $file || true
           done
         '';
     in {
