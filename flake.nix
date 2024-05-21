@@ -92,6 +92,9 @@
           for file in $out/bin/*; do
             ${patchelf}/bin/patchelf --set-rpath '${RPATH_LIST}' "$file" || true
           done
+          for file in $out/libexec/gcc/arm-webos-linux-gnueabi/12.2.0/*; do
+            ${patchelf}/bin/patchelf --set-rpath '${RPATH_LIST}' "$file" || true
+          done
         '';
     in {
 
