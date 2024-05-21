@@ -83,9 +83,9 @@
           # Patch sdl2-config cflags, most programs use <SDL2/SDL.h> instead of <SDL.h>
           # However, the toolchain include dir goes directly to inside SDL2 folder.
           mkdir SDL2
-          ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2 $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2/
-          ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/sdl2-config $out/bin/sdl2-config
-          ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/python3-config $out/bin/python3-config
+          ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2 $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2/ || true
+          ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/sdl2-config $out/bin/sdl2-config || true
+          ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/python3-config $out/bin/python3-config || true
           rm -rf $out/arm-webos-linux-gnueabi_sdk-buildroot
 
           # Patch $out/bin to use the correct RPATH
