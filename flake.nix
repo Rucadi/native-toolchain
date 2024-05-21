@@ -57,7 +57,7 @@
                      }; 
           inherit system;});
 
-      webOSToolchain = {system, lib, toybox, patchelf, fetchurl, runCommand, isl23, gmp, mpfr, libmpc, gcc, readline, libxml2, stdenv, expat, libpkgconfg3}: 
+      webOSToolchain = {system, lib, toybox, patchelf,glib, ncurses6, pcre, acl, icu, libcryptui, cryptopp, fetchurl, runCommand, isl23, gmp, mpfr, libmpc, gcc, readline, libxml2, stdenv, expat, libpkgconfg3}: 
       let 
          RPATH_LIST = lib.makeLibraryPath [
             "${isl23}"
@@ -70,6 +70,13 @@
             "${stdenv.cc.cc.lib}"
             "${expat}"
             "${libpkgconfg3.lib}"
+            "${ncurses6}"
+            "${pcre}"
+            "${cryptopp}"
+            "${acl}"
+            "${libcryptui}"
+            "${icu}"
+            "${glib}"
           ];
       in
         runCommand  "webos-toolchain" {
@@ -87,6 +94,9 @@
           ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/sdl2-config $out/bin/sdl2-config || true
           ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/python3-config $out/bin/python3-config || true
           rm -rf $out/arm-webos-linux-gnueabi_sdk-buildroot
+
+          # remove everything that is not compile-related and can be found in the host pc
+
 
           # Patch $out/bin to use the correct RPATH
           for file in $out/bin/*; do
