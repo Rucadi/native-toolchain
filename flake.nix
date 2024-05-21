@@ -57,7 +57,7 @@
                      }; 
           inherit system;});
 
-      webOSToolchain = {system, lib, toybox, patchelf,glib, ncurses6, pcre, acl, icu, libcryptui, cryptopp, fetchurl, runCommand, isl23, gmp, mpfr, libmpc, gcc, readline, libxml2, stdenv, expat, libpkgconfg3}: 
+      webOSToolchain = {system, lib, toybox,file,  patchelf, fetchurl, runCommand, isl23, gmp, mpfr, libmpc, gcc, readline, libxml2, stdenv, expat, libpkgconfg3}: 
       let 
          RPATH_LIST = lib.makeLibraryPath [
             "${isl23}"
@@ -70,17 +70,10 @@
             "${stdenv.cc.cc.lib}"
             "${expat}"
             "${libpkgconfg3.lib}"
-            "${ncurses6}"
-            "${pcre}"
-            "${cryptopp}"
-            "${acl}"
-            "${libcryptui}"
-            "${icu}"
-            "${glib}"
           ];
       in
         runCommand  "webos-toolchain" {
-          buildInputs = [toybox patchelf isl23 gmp mpfr libmpc gcc readline libxml2 expat libpkgconfg3];
+          buildInputs = [toybox patchelf isl23 gmp mpfr file libmpc gcc readline libxml2 expat libpkgconfg3];
         } ''
           mkdir -p $out
           tar -xf ${inputs."${system}"} -C $out
@@ -91,14 +84,20 @@
           # However, the toolchain include dir goes directly to inside SDL2 folder.
           mkdir SDL2
           ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2 $out/arm-webos-linux-gnueabi/sysroot/usr/include/SDL2/ || true
+
+          for file in $out/bin/*; do
+              if [[ ! $(basename "$file") == arm-* && ! $(basename "$file") == python3-config && ! $(basename "$file") == sdl2-config && ! $(basename "$file") == toolchain-wrapper ]]; then
+                  rm "$file"
+              fi
+          done
           ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/sdl2-config $out/bin/sdl2-config || true
-          ln -s $out/arm-webos-linux-gnueabi/sysroot/usr/bin/python3-config $out/bin/python3-config || true
           rm -rf $out/arm-webos-linux-gnueabi_sdk-buildroot
 
           # remove everything that is not compile-related and can be found in the host pc
 
 
           # Patch $out/bin to use the correct RPATH
+
           for file in $out/bin/*; do
             ${patchelf}/bin/patchelf --set-rpath '${RPATH_LIST}' "$file" || true
           done
