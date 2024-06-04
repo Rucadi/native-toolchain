@@ -26,11 +26,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1716361217,
-        "narHash": "sha256-mzZDr00WUiUXVm1ujBVv6A0qRd8okaITyUp4ezYRgc4=",
+        "lastModified": 1717159533,
+        "narHash": "sha256-oamiKNfr2MS6yH64rUn99mIZjc45nGJlj9eGth/3Xuw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "46397778ef1f73414b03ed553a3368f0e7e33c2f",
+        "rev": "a62e6edd6d5e1fa0329b8653c801147986f8d446",
         "type": "github"
       },
       "original": {
@@ -64,7 +64,7 @@
     "x86_64-linux": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-NNPC0yNg59jwykqkjGoCC1HwACyNVeXviBMzVZ4soeY=",
+        "narHash": "sha256-ePTB455Va+uLTaZN4sJtAY75xo/i/0cfRqbbatd5uTA=",
         "type": "file",
         "url": "https://github.com/openlgtv/buildroot-nc4/releases/latest/download/arm-webos-linux-gnueabi_sdk-buildroot.tar.gz"
       },
